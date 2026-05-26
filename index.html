@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>NEO QUANT AI | MST PORTFOLIO OS</title>
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    /* DARK MODE - Default */
+    body {
+      --bg: linear-gradient(135deg, #0a0a1a 0%, #0f0f2a 100%);
+      --card: rgba(18, 18, 40, 0.85);
+      --card-solid: #121228;
+      --text: #e0e0ff;
+      --text-light: #a0a0cc;
+      --border: rgba(0, 204, 255, 0.15);
+      --primary: #00ccff;
+      --primary-glow: rgba(0, 204, 255, 0.3);
+      --primary-light: rgba(0, 204, 255, 0.1);
+      --positive: #00ff88;
+      --negative: #ff4466;
+      --warning: #ffaa44;
+      --table-header: rgba(0, 204, 255, 0.15);
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      --sidebar-bg: rgba(10, 10, 26, 0.95);
+    }
+    
+    /* LIGHT MODE - Pastel */
+    body.light {
+      --bg: linear-gradient(135deg, #f0ede8 0%, #e6e0d8 100%);
+      --card: rgba(255, 255, 255, 0.95);
+      --card-solid: #ffffff;
+      --text: #4a4a4a;
+      --text-light: #8a8a8a;
+      --border: #d4cfc8;
+      --primary: #7b9a6e;
+      --primary-glow: rgba(123, 154, 110, 0.2);
+      --primary-light: #e8ede4;
+      --positive: #5a8a6e;
+      --negative: #c97a6e;
+      --warning: #c9a06e;
+      --table-header: #e8e4dc;
+      --shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      --sidebar-bg: #f5f0ea;
+    }
+    
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', 'Segoe UI', sans-serif; min-height: 100vh; }
+    
+    /* Sidebar Layout */
+    .app-container { display: flex; min-height: 100vh; }
+    
+    /* Sidebar Navigation */
+    .sidebar { width: 280px; background: var(--sidebar-bg); backdrop-filter: blur(10px); border-right: 1px solid var(--border); padding: 2rem 1rem; position: fixed; height: 100vh; overflow-y: auto; left: 0; top: 0; z-index: 100; }
+    .sidebar-header { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+    .sidebar-header h1 { font-size: 1.2rem; background: linear-gradient(135deg, var(--primary), #aa66ff); background-clip: text; -webkit-background-clip: text; color: transparent; letter-spacing: -0.5px; white-space: pre-line; }
+    .sidebar-header p { font-size: 0.6rem; color: var(--text-light); margin-top: 0.3rem; letter-spacing: 1px; }
+    
+    .nav-menu { display: flex; flex-direction: column; gap: 0.5rem; }
+    .nav-item { display: flex; align-items: center; gap: 1rem; padding: 0.9rem 1.2rem; border-radius: 16px; cursor: pointer; transition: all 0.3s ease; font-size: 0.95rem; font-weight: 600; color: var(--text-light); border: none; background: transparent; width: 100%; text-align: left; }
+    .nav-item:hover { background: var(--primary-light); color: var(--primary); }
+    .nav-item.active { background: var(--primary-light); color: var(--primary); border-left: 3px solid var(--primary); }
+    .nav-icon { font-size: 1.3rem; }
+    .nav-text { flex: 1; letter-spacing: 0.5px; }
+    
+    /* Main Content */
+    .main-content { flex: 1; margin-left: 280px; padding: 1.5rem; overflow-x: auto; }
+    
+    /* Header */
+    .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+    .portfolio-name-input { background: var(--primary-light); border: 1px solid var(--border); border-radius: 30px; padding: 0.3rem 1rem; font-size: 0.7rem; color: var(--text); width: 220px; font-family: monospace; }
+    .theme-btn { background: var(--primary-light); border: 1px solid var(--border); border-radius: 30px; padding: 0.3rem 1rem; cursor: pointer; font-weight: 600; color: var(--primary); transition: all 0.3s ease; }
+    .theme-btn:hover { background: var(--primary); color: white; }
+    
+    /* Upload Panel */
+    .upload-panel { background: var(--card); backdrop-filter: blur(10px); border-radius: 16px; padding: 1rem; margin-bottom: 1.5rem; border: 1px solid var(--border); display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; box-shadow: var(--shadow); }
+    .btn { background: var(--primary-light); border: 1px solid var(--border); padding: 0.5rem 1.2rem; border-radius: 30px; cursor: pointer; font-weight: 600; color: var(--primary); transition: all 0.3s ease; }
+    .btn:hover { background: var(--primary); color: white; }
+    .btn-reset { background: rgba(201, 122, 110, 0.15); border-color: rgba(201, 122, 110, 0.3); color: #c97a6e; }
+    .btn-reset:hover { background: #c97a6e; color: white; }
+    .info { font-size: 0.7rem; background: var(--primary-light); padding: 0.3rem 1rem; border-radius: 30px; color: var(--text-light); }
+    
+    /* KPI Grid */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+    .kpi-card { background: var(--card); backdrop-filter: blur(10px); border-radius: 20px; padding: 1rem; text-align: center; border: 1px solid var(--border); box-shadow: var(--shadow); position: relative; overflow: hidden; }
+    .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--primary), #aa66ff); }
+    .kpi-label { font-size: 0.7rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; }
+    .kpi-value { font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), #aa66ff); background-clip: text; -webkit-background-clip: text; color: transparent; }
+    .positive { color: var(--positive); font-weight: bold; }
+    .negative { color: var(--negative); font-weight: bold; }
+    
+    /* Content Sections */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    
+    /* Tables */
+    .table-wrapper { overflow-x: auto; background: var(--card); backdrop-filter: blur(10px); border-radius: 20px; border: 1px solid var(--border); padding: 0.5rem; max-height: 500px; overflow-y: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+    th { background: var(--table-header); padding: 0.8rem 0.5rem; position: sticky; top: 0; white-space: nowrap; cursor: pointer; color: var(--primary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    td { padding: 0.6rem 0.5rem; border-bottom: 1px solid var(--border); text-align: center; }
+    .text-left { text-align: left; }
+    
+    /* Filter Bar */
+    .filter-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; }
+    .filter-input, .filter-select { padding: 0.4rem 1rem; border-radius: 30px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-family: monospace; }
+    .reset-sort { background: var(--primary-light); border: 1px solid var(--border); padding: 0.2rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.65rem; }
+    
+    /* Quality & Valuation Badges */
+    .quality-excellent { background: linear-gradient(135deg, #00ff8820, #00ccff20); color: #00ff88; padding: 0.2rem 0.6rem; border-radius: 20px; font-weight: bold; display: inline-block; }
+    .quality-good { background: linear-gradient(135deg, #00ccff20, #aa44ff20); color: #00ccff; padding: 0.2rem 0.6rem; border-radius: 20px; font-weight: bold; display: inline-block; }
+    .quality-average { background: rgba(255, 170, 68, 0.15); color: #ffaa44; padding: 0.2rem 0.6rem; border-radius: 20px; font-weight: bold; display: inline-block; }
+    .quality-poor { background: rgba(255, 68, 102, 0.15); color: #ff6688; padding: 0.2rem 0.6rem; border-radius: 20px; font-weight: bold; display: inline-block; }
+    body.light .quality-excellent { background: #5a8a6e20; color: #5a8a6e; }
+    body.light .quality-good { background: #7b9a6e20; color: #7b9a6e; }
+    body.light .quality-average { background: #c9a06e20; color: #c9a06e; }
+    body.light .quality-poor { background: #c97a6e20; color: #c97a6e; }
+    
+    .valuation-undervalued { color: #00ff88; }
+    .valuation-fair { color: #ffaa44; }
+    .valuation-overvalued { color: #ff4466; }
+    body.light .valuation-undervalued { color: #5a8a6e; }
+    body.light .valuation-fair { color: #c9a06e; }
+    body.light .valuation-overvalued { color: #c97a6e; }
+    
+    .action-strong_buy { background: linear-gradient(135deg, #00ff88, #00ccff); color: #0a0a1a; padding: 0.2rem 0.8rem; border-radius: 20px; font-weight: bold; display: inline-block; }
+    .action-buy { background: rgba(0, 255, 136, 0.15); color: #00ff88; padding: 0.2rem 0.8rem; border-radius: 20px; display: inline-block; }
+    .action-hold { background: rgba(255, 170, 68, 0.15); color: #ffaa44; padding: 0.2rem 0.8rem; border-radius: 20px; display: inline-block; }
+    .action-reduce { background: rgba(255, 68, 102, 0.15); color: #ff6688; padding: 0.2rem 0.8rem; border-radius: 20px; display: inline-block; }
+    .action-sell { background: #ff4466; color: #0a0a1a; padding: 0.2rem 0.8rem; border-radius: 20px; font-weight: bold; display: inline-block; }
+    body.light .action-buy { background: #5a8a6e20; color: #5a8a6e; }
+    body.light .action-hold { background: #c9a06e20; color: #c9a06e; }
+    body.light .action-reduce { background: #c97a6e20; color: #c97a6e; }
+    
+    /* Sector Chart */
+    .sector-bar-item { display: flex; align-items: center; gap: 10px; margin-bottom: 0.5rem; }
+    .sector-name { width: 120px; font-size: 0.7rem; font-weight: 600; }
+    .sector-bar-bg { flex: 1; height: 24px; background: var(--primary-light); border-radius: 12px; overflow: hidden; }
+    .sector-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #aa66ff); border-radius: 12px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; color: white; font-size: 0.65rem; font-weight: bold; }
+    body.light .sector-bar-fill { color: var(--text); }
+    
+    /* Charts */
+    .three-charts { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+    .chart-card { background: var(--card); border-radius: 20px; padding: 0.8rem; border: 1px solid var(--border); }
+    .chart-title { font-weight: 600; margin-bottom: 0.5rem; font-size: 0.7rem; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; }
+    canvas { max-height: 250px; width: 100%; }
+    
+    /* Stock Details */
+    .detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.5rem; background: var(--primary-light); border-radius: 12px; padding: 0.8rem; margin-bottom: 1rem; }
+    .detail-label { font-size: 0.6rem; color: var(--text-light); text-transform: uppercase; }
+    .detail-value { font-size: 0.9rem; font-weight: 700; background: linear-gradient(135deg, var(--primary), #aa66ff); background-clip: text; -webkit-background-clip: text; color: transparent; }
+    
+    /* Score Card */
+    .score-card { background: var(--card); border-radius: 20px; padding: 1.5rem; margin-bottom: 1rem; border: 1px solid var(--border); text-align: center; }
+    .score-value { font-size: 3rem; font-weight: 800; background: linear-gradient(135deg, var(--positive), var(--primary)); background-clip: text; -webkit-background-clip: text; color: transparent; }
+    .recommendation-card { background: var(--primary-light); border-radius: 16px; padding: 1rem; margin-bottom: 0.8rem; border-left: 3px solid var(--primary); }
+    
+    /* Fundamentals Grid */
+    .fundamentals-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem; margin-top: 0.8rem; }
+    .fund-card { background: var(--card); border-radius: 20px; border: 1px solid var(--border); padding: 1rem; }
+    .fund-header { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid var(--border); margin-bottom: 0.8rem; padding-bottom: 0.3rem; }
+    .fund-stock { font-weight: 800; font-size: 0.9rem; color: var(--primary); }
+    .fund-row { display: flex; justify-content: space-between; font-size: 0.7rem; margin-bottom: 0.4rem; padding: 0.2rem 0; }
+    .fund-label { color: var(--text-light); }
+    
+    .summary-filters { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 1rem; align-items: center; }
+    .stock-select { width: 100%; padding: 0.6rem; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: var(--text); margin-bottom: 1rem; }
+    .disclaimer-box { background: var(--primary-light); border-radius: 12px; padding: 0.6rem; margin-top: 1rem; font-size: 0.6rem; text-align: center; }
+    
+    /* Sector Diversification Table Styles */
+    .diversification-sector-table { width: 100%; border-collapse: collapse; }
+    .diversification-sector-table th, .diversification-sector-table td { padding: 0.5rem; text-align: left; border-bottom: 1px solid var(--border); }
+    .diversification-sector-table th { background: var(--table-header); }
+    .sector-status-overweight { color: #ff4466; font-weight: bold; }
+    .sector-status-underweight { color: #00ff88; font-weight: bold; }
+    .sector-status-balanced { color: #ffaa44; font-weight: bold; }
+    body.light .sector-status-overweight { color: #c97a6e; }
+    body.light .sector-status-underweight { color: #5a8a6e; }
+    body.light .sector-status-balanced { color: #c9a06e; }
+    
+    @media (max-width: 768px) {
+      .sidebar { width: 80px; padding: 1rem 0.5rem; }
+      .sidebar-header h1 { font-size: 0.7rem; text-align: center; }
+      .sidebar-header p { display: none; }
+      .nav-text { display: none; }
+      .nav-item { justify-content: center; padding: 0.9rem; }
+      .nav-icon { font-size: 1.5rem; }
+      .main-content { margin-left: 80px; }
+      .three-charts { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="app-container">
+  <!-- Sidebar Navigation -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h1 id="dashboardTitle">NEO QUANT AI<br>MST PORTFOLIO OS</h1>
+      <p>INSTITUTIONAL GRADE</p>
+    </div>
+    <div class="nav-menu">
+      <button class="nav-item active" data-tab="holdings">
+        <span class="nav-icon">📋</span>
+        <span class="nav-text">Holdings</span>
+      </button>
+      <button class="nav-item" data-tab="sector">
+        <span class="nav-icon">🏭</span>
+        <span class="nav-text">Sector Analysis</span>
+      </button>
+      <button class="nav-item" data-tab="stock">
+        <span class="nav-icon">🔍</span>
+        <span class="nav-text">Stock Analysis</span>
+      </button>
+      <button class="nav-item" data-tab="charts">
+        <span class="nav-icon">📊</span>
+        <span class="nav-text">Charts</span>
+      </button>
+      <button class="nav-item" data-tab="diversification">
+        <span class="nav-icon">🎯</span>
+        <span class="nav-text">Diversification Score</span>
+      </button>
+      <button class="nav-item" data-tab="fundamentals">
+        <span class="nav-icon">📈</span>
+        <span class="nav-text">Fundamentals</span>
+      </button>
+      <button class="nav-item" data-tab="summary">
+        <span class="nav-icon">🤖</span>
+        <span class="nav-text">AI Decision Matrix</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="top-header">
+      <input type="text" id="portfolioNameInput" class="portfolio-name-input" placeholder="Custom name (optional)" value="">
+      <button class="theme-btn" id="themeToggle">🌓 Dark/Light</button>
+    </div>
+
+    <div class="upload-panel">
+      <input type="file" id="fileInput" accept=".xlsx, .xls, .csv" style="display:none;">
+      <button class="btn" id="uploadBtn">📂 Upload Excel</button>
+      <button class="btn" id="downloadTemplateBtn">📥 Download Template</button>
+      <button class="btn" id="applyBtn">⚡ Apply Data</button>
+      <button class="btn btn-reset" id="resetBtn">🗑 Reset to Sample</button>
+      <span class="info" id="statusMsg">SYSTEM READY</span>
+    </div>
+
+    <div id="kpiContainer" class="kpi-grid"></div>
+
+    <!-- Holdings Tab -->
+    <div id="holdingsTab" class="tab-content active">
+      <div class="filter-bar">
+        <input type="text" id="stockFilter" class="filter-input" placeholder="🔍 Filter by stock...">
+        <div>
+          <span id="filterStats" class="info"></span>
+          <button id="resetSortBtn" class="reset-sort">↺ Reset Sort</button>
+        </div>
+      </div>
+      <div class="table-wrapper">
+        <table id="holdingsTable">
+          <thead id="tableHead"></thead>
+          <tbody id="tableBody"></tbody>
+          <tfoot id="tableFoot"></tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- Sector Analysis Tab -->
+    <div id="sectorTab" class="tab-content">
+      <div class="chart-card">
+        <div class="chart-title">🏭 SECTOR ALLOCATION</div>
+        <div class="sector-bar-chart" id="sectorChart"></div>
+      </div>
+    </div>
+
+    <!-- Stock Analysis Tab -->
+    <div id="stockTab" class="tab-content">
+      <select id="stockSelect" class="stock-select"></select>
+      <div id="stockDetails" class="detail-grid"></div>
+      <div class="stock-chart-container" id="stockChartContainer" style="display: none;">
+        <div class="chart-title">📊 STOCK PERFORMANCE</div>
+        <canvas id="stockComparisonChart" class="stock-canvas"></canvas>
+      </div>
+    </div>
+
+    <!-- Charts Tab -->
+    <div id="chartsTab" class="tab-content">
+      <div class="three-charts">
+        <div class="chart-card">
+          <div class="chart-title">💰 TOP 10 HOLDINGS</div>
+          <canvas id="topChart"></canvas>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">📈 BEST & WORST P&L</div>
+          <canvas id="pnlChart"></canvas>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">🎯 SECTOR BUBBLE CHART</div>
+          <canvas id="bubbleChart"></canvas>
+          <div id="bubbleLegend" style="font-size:0.6rem; text-align:center; margin-top:8px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Diversification Tab -->
+    <div id="diversificationTab" class="tab-content">
+      <div class="score-card">
+        <div class="score-value" id="healthScore">--</div>
+        <div class="score-label">PORTFOLIO HEALTH SCORE</div>
+        <div class="score-label" style="font-size:0.65rem; margin-top:0.3rem;" id="scoreStatus"></div>
+      </div>
+      <div class="chart-card" style="margin-bottom:1rem;">
+        <div class="chart-title">📊 CONCENTRATION ANALYSIS</div>
+        <div id="concentrationMetrics"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">⚖️ REBALANCING RECOMMENDATIONS</div>
+        <div id="recommendationsList"></div>
+      </div>
+      <div class="chart-card" style="margin-top:1rem;">
+        <div class="chart-title">🏭 SECTOR DIVERSIFICATION</div>
+        <div id="sectorHealthTable"></div>
+      </div>
+    </div>
+
+    <!-- Fundamentals Tab -->
+    <div id="fundamentalsTab" class="tab-content">
+      <div class="filter-bar" style="margin-bottom: 0.8rem;">
+        <input type="text" id="fundFilter" class="filter-input" placeholder="🔍 Filter by stock...">
+        <span id="fundCount" class="info"></span>
+      </div>
+      <div id="fundamentalsGrid" class="fundamentals-grid"></div>
+    </div>
+
+    <!-- AI Decision Matrix Tab -->
+    <div id="summaryTab" class="tab-content">
+      <div class="summary-filters">
+        <select id="summaryValuationFilter" class="filter-select">
+          <option value="all">ALL VALUATIONS</option>
+          <option value="undervalued">🟢 UNDERVALUED</option>
+          <option value="fair">🟡 FAIR</option>
+          <option value="overvalued">🔴 OVERVALUED</option>
+        </select>
+        <select id="summaryQualityFilter" class="filter-select">
+          <option value="all">ALL QUALITIES</option>
+          <option value="excellent">⭐ EXCELLENT</option>
+          <option value="good">✅ GOOD</option>
+          <option value="average">📊 AVERAGE</option>
+          <option value="poor">⚠️ POOR</option>
+        </select>
+        <select id="summaryActionFilter" class="filter-select">
+          <option value="all">ALL ACTIONS</option>
+          <option value="strong_buy">🔥 STRONG BUY</option>
+          <option value="buy">📈 BUY</option>
+          <option value="hold">🤚 HOLD</option>
+          <option value="reduce">📉 REDUCE</option>
+          <option value="sell">⚠️ SELL</option>
+        </select>
+        <select id="summarySectorFilter" class="filter-select">
+          <option value="all">ALL SECTORS</option>
+        </select>
+        <button id="summaryResetFilters" class="reset-sort">RESET FILTERS</button>
+        <span id="summaryFilterStats" class="info"></span>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">🤖 AI DECISION MATRIX</div>
+        <div class="table-wrapper" style="max-height: 500px;">
+          <table id="summaryTable">
+            <thead><tr><th>STOCK</th><th>SECTOR</th><th>QUALITY</th><th>VALUATION</th><th>AI RECOMMENDATION</th></tr></thead>
+            <tbody id="summaryTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="disclaimer-box">⚡ AI DECISION MATRIX POWERED BY QUANTUM METRICS • PEG • P/E • P/B • ROE • ROCE • D/E ⚡</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Fundamental Data
+  const fundamentalDB = {
+    "NSE:TCS": { roe:49.1, roce:66.24, de:0.5, pe:17, pb:7.81, peg:2.22, pat:49454 },
+    "NSE:RELIANCE": { roe:9.9, roce:11.29, de:0.41, pe:22.7, pb:2.03, peg:3.44, pat:95610 },
+    "NSE:GESHIP": { roe:17.6, roce:16.95, de:0.15, pe:8.1, pb:1.4, peg:1.78, pat:2942.52 },
+    "NSE:SWIGGY": { roe:0, roce:-33.05, de:0.5, pe:20, pb:3.76, peg:1.0, pat:-4150 },
+    "NSE:BHARTIARTL": { roe:38.4, roce:24.26, de:1.31, pe:42.7, pb:7.65, peg:0.87, pat:33458.3 },
+    "NSE:PRESTIGE": { roe:4.6, roce:8.57, de:0.69, pe:50, pb:3.73, peg:2.64, pat:1322.5 },
+    "NSE:IDEA": { roe:0, roce:-2.46, de:-1.83, pe:4.3, pb:2.0, peg:0.77, pat:34551.7 },
+    "NSE:BPCL": { roe:17.0, roce:17.16, de:0.64, pe:5.0, pb:1.28, peg:0.04, pat:24332.58 },
+    "NSE:WIPRO": { roe:15.7, roce:18.44, de:0.19, pe:16.1, pb:2.43, peg:3.13, pat:13239.8 },
+    "NSE:TITAN": { roe:31.9, roce:20.99, de:1.56, pe:71.4, pb:23.07, peg:4.31, pat:5073 },
+    "NSE:HINDUNILVR": { roe:21.2, roce:29.43, de:0.5, pe:34.4, pb:10.62, peg:2.39, pat:10597 },
+    "NSE:TRENT": { roe:32.2, roce:42.36, de:0.09, pe:88.8, pb:21.86, peg:1.55, pat:1717.43 },
+    "NSE:OIL": { roe:14.3, roce:13.86, de:0.6, pe:12.3, pb:1.4, peg:1.0, pat:6429.11 },
+    "NSE:UNITECH": { roe:0, roce:0, de:-0.56, pe:20, pb:2, peg:1.0, pat:-2941.17 },
+    "NSE:TATAPOWER": { roe:14, roce:12.54, de:1.62, pe:34.9, pb:3.31, peg:7.59, pat:4409.69 },
+    "NSE:DELHIVERY": { roe:1.9, roce:3.02, de:0.5, pe:219.7, pb:3.46, peg:7.41, pat:145.36 },
+    "NSE:ETERNAL": { roe:2.2, roce:3.36, de:0.5, pe:638, pb:7.53, peg:19.07, pat:366 },
+    "NSE:E2E": { roe:5.8, roce:8.58, de:0.01, pe:20.0, pb:4.37, peg:1.0, pat:-15.57 },
+    "NSE:GAIL": { roe:15.39, roce:17.11, de:0.19, pe:14.63, pb:1.44, peg:1.39, pat:-39.1 },
+    "BOM:544467": { roe:18.61, roce:24.8, de:0, pe:42.59, pb:6.82, peg:null, pat:10.67 },
+    "NSE:GROWW": { roe:52.52, roce:62.92, de:0.12, pe:57.04, pb:12.3, peg:null, pat:14.18 },
+    "NSE:HYUNDAI": { roe:41.8, roce:54.08, de:0.05, pe:27.7, pb:7.51, peg:1.0, pat:5431.52 },
+    "NSE:JYOTICNC": { roe:20.7, roce:23.88, de:0.29, pe:42.9, pb:7.91, peg:1.0, pat:354.4 },
+    "NSE:KIRLOSENG": { roe:16.6, roce:14.56, de:1.88, pe:42.3, pb:6.71, peg:1.95, pat:557.72 },
+    "NSE:LODHA": { roe:15.2, roce:0, de:0.36, pe:25.8, pb:3.88, peg:1.04, pat:3421.5 },
+    "NSE:NATCOPHARM": { roe:28, roce:32.85, de:0.04, pe:13.5, pb:2.38, peg:0.11, pat:1544.6 },
+    "NSE:NETWEB": { roe:24.4, roce:33.07, de:0.5, pe:106.6, pb:30.33, peg:1.67, pat:205.82 },
+    "NSE:PETRONET": { roe:20.8, roce:28.76, de:0.02, pe:10.5, pb:1.84, peg:1.88, pat:3809.41 },
+    "NSE:PIDILITIND": { roe:23.2, roce:31.16, de:0.02, pe:61.5, pb:13.91, peg:2.51, pat:2473.09 },
+    "NSE:PREMIERENE": { roe:54.4, roce:41.97, de:0.68, pe:29.3, pb:10.28, peg:1.0, pat:1504.57 },
+    "NSE:ROTO": { roe:16.2, roce:20.48, de:0.14, pe:34.8, pb:4.65, peg:10.15, pat:31.61 },
+    "NSE:TATAELXSI": { roe:29.4, roce:39.09, de:0.5, pe:42.7, pb:8.83, peg:1.0, pat:628.43 },
+    "NSE:TATAINVEST": { roe:1.02, roce:1.21, de:0, pe:79.12, pb:1.17, peg:3.98, pat:38.96 },
+    "NSE:TATATECH": { roe:20, roce:27.68, de:0.5, pe:49.8, pb:6.94, peg:1.0, pat:522.57 },
+    "NSE:TMCV": { roe:-363, roce:-362.96, de:0.5, pe:42.1, pb:10.56, peg:1.0, pat:3362 },
+    "NSE:VBL": { roe:16.9, roce:20.73, de:0.1, pe:57.4, pb:8.93, peg:2.16, pat:3218.79 },
+    "NSE:ZYDUSWELL": { roe:6.3, roce:6.43, de:0.03, pe:79.1, pb:2.68, peg:1.0, pat:197.2 }
+  };
+
+  let portfolio = [];
+  let charts = {};
+  let stockChart = null;
+  let currentSort = { column: null, direction: 'asc' };
+  let currentFilterText = "";
+
+  const sampleStocks = [
+    { stock: "NSE:TCS", cmp: 2307.4, buyPrice: 3886, qty: 3, invested: 11658 },
+    { stock: "NSE:RELIANCE", cmp: 1366.4, buyPrice: 1251, qty: 10, invested: 12510 },
+    { stock: "NSE:GESHIP", cmp: 1647.2, buyPrice: 786, qty: 45, invested: 35370 },
+    { stock: "NSE:SWIGGY", cmp: 249.7, buyPrice: 474, qty: 5, invested: 2370 },
+    { stock: "NSE:BHARTIARTL", cmp: 1879, buyPrice: 2116, qty: 10, invested: 21160 },
+    { stock: "NSE:PRESTIGE", cmp: 1396, buyPrice: 460, qty: 5, invested: 2300 },
+    { stock: "NSE:IDEA", cmp: 14.06, buyPrice: 8.47, qty: 640, invested: 5420.8 },
+    { stock: "NSE:BPCL", cmp: 308.3, buyPrice: 312, qty: 20, invested: 6240 },
+    { stock: "NSE:WIPRO", cmp: 206, buyPrice: 312, qty: 100, invested: 31200 },
+    { stock: "NSE:TITAN", cmp: 4151.9, buyPrice: 3654, qty: 3, invested: 10962 },
+    { stock: "NSE:HINDUNILVR", cmp: 2198, buyPrice: 2382, qty: 3, invested: 7146 },
+    { stock: "NSE:TRENT", cmp: 4304.4, buyPrice: 4013, qty: 1, invested: 4013 },
+    { stock: "NSE:OIL", cmp: 483, buyPrice: 593, qty: 10, invested: 5930 },
+    { stock: "NSE:UNITECH", cmp: 5.39, buyPrice: 6.45, qty: 950, invested: 6127.5 },
+    { stock: "NSE:TATAPOWER", cmp: 414.3, buyPrice: 433, qty: 10, invested: 4330 },
+    { stock: "NSE:DELHIVERY", cmp: 456, buyPrice: 426, qty: 10, invested: 4260 },
+    { stock: "NSE:ETERNAL", cmp: 247.5, buyPrice: 143, qty: 100, invested: 14300 },
+    { stock: "NSE:E2E", cmp: 3699, buyPrice: 2754, qty: 7, invested: 19278 },
+    { stock: "NSE:GAIL", cmp: 168.41, buyPrice: 236, qty: 25, invested: 5900 },
+    { stock: "BOM:544467", cmp: 808.6, buyPrice: 927, qty: 5, invested: 4635 },
+    { stock: "NSE:NATCOPHARM", cmp: 1178, buyPrice: 885, qty: 10, invested: 8850 },
+    { stock: "NSE:PETRONET", cmp: 282.9, buyPrice: 93, qty: 40, invested: 3720 },
+    { stock: "NSE:PIDILITIND", cmp: 1485.8, buyPrice: 1015, qty: 5, invested: 5075 }
+  ];
+
+  function getSector(stock) {
+    const s = stock.split(':')[1] || stock;
+    const map = {
+      "TCS": "IT", "RELIANCE": "Oil & Gas", "GESHIP": "Shipping", "SWIGGY": "E-Commerce",
+      "BHARTIARTL": "Telecom", "PRESTIGE": "Realty", "IDEA": "Telecom", "BPCL": "Oil & Gas",
+      "WIPRO": "IT", "TITAN": "Retail", "HINDUNILVR": "FMCG", "TRENT": "Retail", "OIL": "Oil & Gas",
+      "UNITECH": "Realty", "TATAPOWER": "Power", "DELHIVERY": "Logistics", "ETERNAL": "E-Commerce",
+      "E2E": "IT", "GAIL": "Oil & Gas", "544467": "Other", "NATCOPHARM": "Pharma", "PETRONET": "Oil & Gas",
+      "PIDILITIND": "Chemicals", "GROWW": "Broking", "HYUNDAI": "Auto", "JYOTICNC": "Engineering",
+      "KIRLOSENG": "Engineering", "LODHA": "Realty", "NETWEB": "IT", "PREMIERENE": "Electricals",
+      "ROTO": "Pumps", "TATAELXSI": "IT", "TATAINVEST": "Finance", "TATATECH": "IT",
+      "TMCV": "Auto", "VBL": "FMCG", "ZYDUSWELL": "Consumer"
+    };
+    return map[s] || "Other";
+  }
+
+  function calculate(stock) {
+    const currentValue = stock.cmp * stock.qty;
+    const pnl = currentValue - stock.invested;
+    const pnlPct = stock.invested > 0 ? (pnl / stock.invested) * 100 : 0;
+    return { currentValue, pnl, pnlPct };
+  }
+
+  function processData(stocks) {
+    return stocks.map(s => ({ ...s, ...calculate(s), sector: getSector(s.stock) }));
+  }
+
+  function formatCurrency(num) {
+    if (num >= 10000000) return (num / 10000000).toFixed(2) + ' Cr';
+    if (num >= 100000) return (num / 100000).toFixed(2) + ' L';
+    if (num >= 1000) return (num / 1000).toFixed(2) + ' K';
+    return num.toFixed(0);
+  }
+
+  function sortData(data, column, direction) {
+    const sorted = [...data];
+    sorted.sort((a, b) => {
+      let aVal = a[column], bVal = b[column];
+      if (column === 'stock') {
+        aVal = aVal.toLowerCase(); bVal = bVal.toLowerCase();
+        return direction === 'asc' ? (aVal < bVal ? -1 : 1) : (aVal > bVal ? -1 : 1);
+      }
+      if (typeof aVal === 'number') return direction === 'asc' ? aVal - bVal : bVal - aVal;
+      return direction === 'asc' ? (aVal > bVal ? 1 : -1) : (aVal < bVal ? 1 : -1);
+    });
+    return sorted;
+  }
+
+  function renderHoldingsTable(data) {
+    const totalValue = data.reduce((s, i) => s + i.currentValue, 0);
+    let filtered = data;
+    if (currentFilterText) filtered = data.filter(s => s.stock.toLowerCase().includes(currentFilterText.toLowerCase()));
+    if (currentSort.column) filtered = sortData(filtered, currentSort.column, currentSort.direction);
+    
+    const columns = [
+      { key: "stock", label: "STOCK" }, { key: "cmp", label: "CMP" }, { key: "buyPrice", label: "BUY" },
+      { key: "qty", label: "QTY" }, { key: "invested", label: "INVESTED" }, { key: "currentValue", label: "CURRENT" },
+      { key: "pnl", label: "P&L" }, { key: "pnlPct", label: "P&L %" }, { key: "portPct", label: "% OF PORT" }
+    ];
+    
+    document.getElementById("tableHead").innerHTML = `<tr>${columns.map(col => `<th data-sort="${col.key}">${col.label}</th>`).join('')}</tr>`;
+    
+    document.getElementById("tableBody").innerHTML = filtered.map(s => {
+      const portPct = (s.currentValue / totalValue) * 100;
+      return `<tr><td class="text-left" style="font-weight:600; color:var(--primary);">${s.stock}</td><td class="${s.cmp >= s.buyPrice ? 'positive' : 'negative'}">${formatCurrency(s.cmp)}</td><td>${formatCurrency(s.buyPrice)}</td><td>${s.qty}</td><td>${formatCurrency(s.invested)}</td><td class="${s.currentValue >= s.invested ? 'positive' : 'negative'}">${formatCurrency(s.currentValue)}</td><td class="${s.pnl >= 0 ? 'positive' : 'negative'}">${s.pnl >= 0 ? '+' : ''}${formatCurrency(Math.abs(s.pnl))}</td><td class="${s.pnlPct >= 0 ? 'positive' : 'negative'}">${s.pnlPct >= 0 ? '+' : ''}${s.pnlPct.toFixed(2)}%</td><td>${portPct.toFixed(2)}%</td></tr>`;
+    }).join('');
+    
+    document.getElementById("filterStats").innerHTML = `${filtered.length} OF ${data.length} STOCKS`;
+    
+    document.querySelectorAll('#tableHead th').forEach(th => { th.removeEventListener('click', sortHandler); th.addEventListener('click', sortHandler); });
+  }
+
+  function sortHandler(e) {
+    const column = e.currentTarget.dataset.sort;
+    if (!column) return;
+    if (currentSort.column === column) currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+    else { currentSort.column = column; currentSort.direction = 'asc'; }
+    renderHoldingsTable(portfolio);
+  }
+
+  function isLossMaking(fd) {
+    if (!fd) return false;
+    if (fd.pat && typeof fd.pat === 'number' && fd.pat < 0) return true;
+    if (fd.roe && (parseFloat(fd.roe) <= 0 || fd.roe === "0.00")) return true;
+    return false;
+  }
+
+  function calculateValuation(stock, fd) {
+    if (!fd) return { status: "fair" };
+    if (fd.pe && fd.pe < 15) return { status: "undervalued" };
+    if (fd.pe && fd.pe > 25) return { status: "overvalued" };
+    return { status: "fair" };
+  }
+  
+  function calculateQuality(stock, fd) {
+    if (!fd) return { rating: "average" };
+    if (isLossMaking(fd)) return { rating: "poor" };
+    if (fd.roe && fd.roe > 25) return { rating: "excellent" };
+    if (fd.roe && fd.roe > 15) return { rating: "good" };
+    if (fd.roe && fd.roe > 10) return { rating: "average" };
+    return { rating: "poor" };
+  }
+  
+  function determineAction(valuation, quality) {
+    if (quality.rating === "poor") return { action: "sell", text: "⚠️ SELL" };
+    if (quality.rating === "excellent" && valuation.status === "undervalued") return { action: "strong_buy", text: "🔥 STRONG BUY" };
+    if (quality.rating === "good" && valuation.status === "undervalued") return { action: "buy", text: "📈 BUY" };
+    if (valuation.status === "overvalued" && quality.rating === "average") return { action: "reduce", text: "📉 REDUCE" };
+    if (quality.rating === "excellent") return { action: "hold", text: "🤚 HOLD" };
+    if (quality.rating === "good") return { action: "hold", text: "🤚 HOLD" };
+    return { action: "hold", text: "🤚 HOLD" };
+  }
+
+  // AI DECISION MATRIX
+  function renderSummary() {
+    if (!portfolio.length) {
+      document.getElementById("summaryTableBody").innerHTML = '<tr><td colspan="5" style="text-align:center;">LOADING DATA...</td></tr>';
+      return;
+    }
+    
+    const valuationFilter = document.getElementById("summaryValuationFilter").value;
+    const qualityFilter = document.getElementById("summaryQualityFilter").value;
+    const actionFilter = document.getElementById("summaryActionFilter").value;
+    const sectorFilter = document.getElementById("summarySectorFilter").value;
+    
+    const allData = portfolio.map(stock => {
+      const fd = fundamentalDB[stock.stock];
+      const valuation = calculateValuation(stock, fd);
+      const quality = calculateQuality(stock, fd);
+      const action = determineAction(valuation, quality);
+      return { 
+        stock: stock.stock.split(':')[1] || stock.stock, 
+        sector: stock.sector, 
+        valuation: valuation.status, 
+        quality: quality.rating, 
+        action: action.action,
+        actionText: action.text
+      };
+    });
+    
+    const sectors = [...new Set(allData.map(s => s.sector))].sort();
+    const sectorSelect = document.getElementById("summarySectorFilter");
+    const currentSectorValue = sectorSelect.value;
+    sectorSelect.innerHTML = '<option value="all">ALL SECTORS</option>' + sectors.map(s => `<option value="${s}">${s}</option>`).join('');
+    if (currentSectorValue !== "all" && sectors.includes(currentSectorValue)) sectorSelect.value = currentSectorValue;
+    
+    let filteredData = [...allData];
+    if (valuationFilter !== "all") filteredData = filteredData.filter(s => s.valuation === valuationFilter);
+    if (qualityFilter !== "all") filteredData = filteredData.filter(s => s.quality === qualityFilter);
+    if (actionFilter !== "all") filteredData = filteredData.filter(s => s.action === actionFilter);
+    if (sectorFilter !== "all") filteredData = filteredData.filter(s => s.sector === sectorFilter);
+    
+    document.getElementById("summaryFilterStats").innerHTML = `${filteredData.length} OF ${allData.length} STOCKS`;
+    
+    if (filteredData.length === 0) {
+      document.getElementById("summaryTableBody").innerHTML = '<tr><td colspan="5" style="text-align:center;">NO STOCKS MATCH THE SELECTED FILTERS</td></tr>';
+      return;
+    }
+    
+    document.getElementById("summaryTableBody").innerHTML = filteredData.map(s => {
+      let qualityClass = "", qualityText = "";
+      switch(s.quality) {
+        case "excellent": qualityClass = "quality-excellent"; qualityText = "⭐ EXCELLENT"; break;
+        case "good": qualityClass = "quality-good"; qualityText = "✅ GOOD"; break;
+        case "average": qualityClass = "quality-average"; qualityText = "📊 AVERAGE"; break;
+        default: qualityClass = "quality-poor"; qualityText = "⚠️ POOR";
+      }
+      
+      let valuationClass = "", valuationText = "";
+      switch(s.valuation) {
+        case "undervalued": valuationClass = "valuation-undervalued"; valuationText = "🟢 UNDERVALUED"; break;
+        case "fair": valuationClass = "valuation-fair"; valuationText = "🟡 FAIR"; break;
+        default: valuationClass = "valuation-overvalued"; valuationText = "🔴 OVERVALUED";
+      }
+      
+      let actionClass = "", actionTextDisplay = "";
+      switch(s.action) {
+        case "strong_buy": actionClass = "action-strong_buy"; actionTextDisplay = "🔥 STRONG BUY"; break;
+        case "buy": actionClass = "action-buy"; actionTextDisplay = "📈 BUY"; break;
+        case "reduce": actionClass = "action-reduce"; actionTextDisplay = "📉 REDUCE"; break;
+        case "sell": actionClass = "action-sell"; actionTextDisplay = "⚠️ SELL"; break;
+        default: actionClass = "action-hold"; actionTextDisplay = "🤚 HOLD";
+      }
+      
+      return `<tr><td class="text-left" style="font-weight:600; color:var(--primary);">${s.stock}</td><td>${s.sector}</td><td><span class="${qualityClass}">${qualityText}</span></td><td><span class="${valuationClass}">${valuationText}</span></td><td><span class="${actionClass}">${actionTextDisplay}</span></td></tr>`;
+    }).join('');
+  }
+
+  // Sector Diversification with Health Status and Action columns
+  function updateSectorDiversification() {
+    if (!portfolio.length) return;
+    
+    const totalValue = portfolio.reduce((s, i) => s + i.currentValue, 0);
+    const sectorMap = new Map();
+    
+    portfolio.forEach(s => {
+      if (!sectorMap.has(s.sector)) sectorMap.set(s.sector, 0);
+      sectorMap.set(s.sector, sectorMap.get(s.sector) + s.currentValue);
+    });
+    
+    const sectorPcts = Array.from(sectorMap.entries()).map(([name, value]) => ({ 
+      name: name, 
+      value: value, 
+      pct: (value / totalValue) * 100 
+    })).sort((a, b) => b.pct - a.pct);
+    
+    const totalSectors = sectorPcts.length;
+    const idealPct = 100 / totalSectors;
+    
+    const sectorTableHtml = `
+      <table class="diversification-sector-table">
+        <thead>
+          <tr><th>Sector</th><th>Value (₹)</th><th>% of Portfolio</th><th>Health Status</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+          ${sectorPcts.map(s => {
+            const deviation = s.pct - idealPct;
+            let healthStatus = "", healthClass = "", actionText = "";
+            if (deviation > idealPct * 0.5) {
+              healthStatus = "🔴 Overweight";
+              healthClass = "sector-status-overweight";
+              actionText = "Consider reducing";
+            } else if (deviation > idealPct * 0.2) {
+              healthStatus = "🟡 Slightly Overweight";
+              healthClass = "sector-status-overweight";
+              actionText = "Monitor position";
+            } else if (deviation < -idealPct * 0.3) {
+              healthStatus = "🟢 Underweight";
+              healthClass = "sector-status-underweight";
+              actionText = "Opportunity to add";
+            } else {
+              healthStatus = "✅ Balanced";
+              healthClass = "sector-status-balanced";
+              actionText = "Maintain";
+            }
+            return `<tr><td style="text-align:left; font-weight:500;">${s.name}</td><td>${formatCurrency(s.value)}</td><td>${s.pct.toFixed(1)}%</td><td class="${healthClass}">${healthStatus}</td><td>${actionText}</td></tr>`;
+          }).join('')}
+        </tbody>
+        <tfoot>
+          <tr style="background:var(--table-header);"><td colspan="5" style="text-align:center; font-size:0.65rem;">💡 Ideal allocation: ${idealPct.toFixed(1)}% per sector across ${totalSectors} sectors</td></tr>
+        </tfoot>
+      </table>
+    `;
+    document.getElementById("sectorHealthTable").innerHTML = sectorTableHtml;
+  }
+
+  function updateAll(data) {
+    const totalInvested = data.reduce((s, i) => s + i.invested, 0);
+    const totalValue = data.reduce((s, i) => s + i.currentValue, 0);
+    const totalPnl = totalValue - totalInvested;
+    const winners = data.filter(s => s.pnl > 0).length;
+    const losers = data.filter(s => s.pnl < 0).length;
+    portfolio = data;
+
+    document.getElementById("kpiContainer").innerHTML = `
+      <div class="kpi-card"><div class="kpi-label">TOTAL INVESTED</div><div class="kpi-value">₹${formatCurrency(totalInvested)}</div></div>
+      <div class="kpi-card"><div class="kpi-label">CURRENT VALUE</div><div class="kpi-value">₹${formatCurrency(totalValue)}</div></div>
+      <div class="kpi-card"><div class="kpi-label">TOTAL P&L</div><div class="kpi-value ${totalPnl >= 0 ? 'positive' : 'negative'}">${totalPnl >= 0 ? '+' : ''}₹${formatCurrency(Math.abs(totalPnl))}</div></div>
+      <div class="kpi-card"><div class="kpi-label">WIN/LOSS RATIO</div><div class="kpi-value">${winners}/${losers}</div></div>
+    `;
+
+    renderHoldingsTable(data);
+    document.getElementById("stockFilter").oninput = (e) => { currentFilterText = e.target.value; renderHoldingsTable(portfolio); };
+    
+    // Sector chart (bar chart)
+    const sectorMap = new Map();
+    data.forEach(s => sectorMap.set(s.sector, (sectorMap.get(s.sector) || 0) + s.currentValue));
+    const sectorData = Array.from(sectorMap.entries()).map(([n,v]) => ({ name: n, value: v, pct: (v/totalValue)*100 })).sort((a,b) => b.value - a.value);
+    document.getElementById("sectorChart").innerHTML = sectorData.map(s => `
+      <div class="sector-bar-item">
+        <div class="sector-name">${s.name}</div>
+        <div class="sector-bar-bg"><div class="sector-bar-fill" style="width: ${s.pct}%;">${s.pct.toFixed(1)}%</div></div>
+        <div style="min-width:80px; text-align:right;">₹${formatCurrency(s.value)}</div>
+      </div>
+    `).join('');
+
+    // Stock selector
+    const select = document.getElementById("stockSelect");
+    select.innerHTML = '<option value="">-- SELECT STOCK --</option>' + data.map(s => `<option value="${s.stock}">${s.stock}</option>`).join('');
+    select.onchange = () => {
+      const s = data.find(x => x.stock === select.value);
+      if (s) {
+        document.getElementById("stockDetails").innerHTML = `
+          <div class="detail-item"><div class="detail-label">STOCK</div><div class="detail-value">${s.stock}</div></div>
+          <div class="detail-item"><div class="detail-label">SECTOR</div><div class="detail-value">${s.sector}</div></div>
+          <div class="detail-item"><div class="detail-label">QTY</div><div class="detail-value">${s.qty}</div></div>
+          <div class="detail-item"><div class="detail-label">INVESTED</div><div class="detail-value">₹${formatCurrency(s.invested)}</div></div>
+          <div class="detail-item"><div class="detail-label">CURRENT</div><div class="detail-value">₹${formatCurrency(s.currentValue)}</div></div>
+          <div class="detail-item"><div class="detail-label">P&L</div><div class="detail-value ${s.pnl >= 0 ? 'positive' : 'negative'}">${s.pnl >= 0 ? '+' : ''}₹${formatCurrency(Math.abs(s.pnl))}</div></div>
+        `;
+        document.getElementById("stockChartContainer").style.display = 'block';
+        if (stockChart) stockChart.destroy();
+        const ctx = document.getElementById("stockComparisonChart").getContext("2d");
+        stockChart = new Chart(ctx, {
+          type: 'bar',
+          data: { labels: ['INVESTED', 'CURRENT'], datasets: [{ label: '₹', data: [s.invested, s.currentValue], backgroundColor: s.currentValue >= s.invested ? '#00ff88' : '#ff4466', borderRadius: 8 }] },
+          options: { responsive: true, maintainAspectRatio: true }
+        });
+      } else { document.getElementById("stockChartContainer").style.display = 'none'; }
+    };
+
+    // Top 10 chart
+    const top10 = [...data].sort((a,b) => b.currentValue - a.currentValue).slice(0,10);
+    if (charts.top) charts.top.destroy();
+    charts.top = new Chart(document.getElementById("topChart"), { type: 'bar', data: { labels: top10.map(s => s.stock.split(':')[1]), datasets: [{ label: '₹ VALUE', data: top10.map(s => s.currentValue), backgroundColor: '#00ccff80' }] }, options: { responsive: true } });
+
+    // P&L chart
+    const pnlData = [...data].sort((a,b) => Math.abs(b.pnl) - Math.abs(a.pnl)).slice(0,10);
+    if (charts.pnl) charts.pnl.destroy();
+    charts.pnl = new Chart(document.getElementById("pnlChart"), { type: 'bar', data: { labels: pnlData.map(s => s.stock.split(':')[1]), datasets: [{ label: '₹ P&L', data: pnlData.map(s => s.pnl), backgroundColor: pnlData.map(s => s.pnl >= 0 ? '#00ff88' : '#ff4466') }] }, options: { responsive: true } });
+
+    // Bubble chart
+    const bubbleSectorMap = new Map();
+    data.forEach(s => {
+      if (!bubbleSectorMap.has(s.sector)) bubbleSectorMap.set(s.sector, { totalValue: 0, totalPnl: 0 });
+      const sec = bubbleSectorMap.get(s.sector);
+      sec.totalValue += s.currentValue;
+      sec.totalPnl += s.pnl;
+    });
+    const bubbleData = Array.from(bubbleSectorMap.entries()).map(([name, sec]) => ({
+      x: (sec.totalValue / totalValue) * 100,
+      y: sec.totalValue > 0 ? (sec.totalPnl / sec.totalValue) * 100 : 0,
+      r: Math.sqrt(sec.totalValue) / 15,
+      name: name
+    })).filter(s => s.x >= 1);
+    const colors = ['#00ccff', '#00ff88', '#ffaa44', '#ff4466', '#aa66ff', '#ff66aa', '#66ffaa'];
+    if (charts.bubble) charts.bubble.destroy();
+    charts.bubble = new Chart(document.getElementById("bubbleChart"), {
+      type: 'bubble',
+      data: { datasets: bubbleData.map((item, idx) => ({ label: item.name, data: [{ x: item.x, y: item.y, r: item.r }], backgroundColor: colors[idx % colors.length], borderColor: '#fff', borderWidth: 1 })) },
+      options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } }, scales: { x: { title: { display: true, text: 'Allocation %' } }, y: { title: { display: true, text: 'Return %' } } } }
+    });
+    document.getElementById("bubbleLegend").innerHTML = bubbleData.map((item, idx) => `<span style="display:inline-flex;align-items:center;margin:0 6px;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${colors[idx % colors.length]};margin-right:4px;"></span>${item.name}</span>`).join('');
+
+    // Diversification Score
+    const topStockPct = Math.max(...data.map(s => (s.currentValue / totalValue) * 100));
+    const maxSectorPct = Math.max(...sectorData.map(s => s.pct));
+    const top5Pct = [...data].sort((a,b) => b.currentValue - a.currentValue).slice(0,5).reduce((s,i) => s + i.currentValue, 0) / totalValue * 100;
+    
+    let holdingScore = data.length >= 20 ? 30 : data.length >= 15 ? 20 : data.length >= 10 ? 12 : 6;
+    let concentrationScore = topStockPct <= 10 ? 25 : topStockPct <= 15 ? 20 : topStockPct <= 20 ? 15 : 8;
+    let sectorScore = maxSectorPct <= 25 ? 25 : maxSectorPct <= 35 ? 18 : maxSectorPct <= 50 ? 10 : 5;
+    let top5Score = top5Pct <= 40 ? 20 : top5Pct <= 55 ? 14 : top5Pct <= 70 ? 8 : 3;
+    const totalScore = holdingScore + concentrationScore + sectorScore + top5Score;
+    
+    document.getElementById("healthScore").innerHTML = `${totalScore}/100`;
+    document.getElementById("scoreStatus").innerHTML = totalScore >= 80 ? "🏆 Well diversified portfolio!" : totalScore >= 65 ? "✅ Healthy diversification" : totalScore >= 50 ? "⚠️ Moderate concentration risk" : "🔴 High concentration risk";
+    
+    document.getElementById("concentrationMetrics").innerHTML = `
+      <div style="margin-bottom:0.8rem;"><div>📦 HOLDINGS: ${data.length} <span class="${data.length >= 20 ? 'positive' : 'warning'}">(Ideal: 20+)</span></div></div>
+      <div style="margin-bottom:0.8rem;"><div>🎯 TOP STOCK: ${topStockPct.toFixed(1)}% <span class="${topStockPct <= 15 ? 'positive' : 'warning'}">(Ideal: <15%)</span></div></div>
+      <div style="margin-bottom:0.8rem;"><div>🏭 TOP SECTOR: ${maxSectorPct.toFixed(1)}% <span class="${maxSectorPct <= 25 ? 'positive' : 'warning'}">(Ideal: <25%)</span></div></div>
+      <div><div>📊 TOP 5 STOCKS: ${top5Pct.toFixed(1)}% <span class="${top5Pct <= 40 ? 'positive' : 'warning'}">(Ideal: <40%)</span></div></div>
+    `;
+    
+    let recommendations = [];
+    if (topStockPct > 15) recommendations.push(`Top stock is ${topStockPct.toFixed(1)}% of portfolio. Consider reducing concentration.`);
+    if (maxSectorPct > 30) recommendations.push(`Top sector dominates at ${maxSectorPct.toFixed(1)}%. Diversify across other sectors.`);
+    if (data.length < 15) recommendations.push(`You have only ${data.length} stocks. Adding more will improve diversification.`);
+    if (top5Pct > 55) recommendations.push(`Top 5 stocks make up ${top5Pct.toFixed(1)}% of portfolio. Spread investments more evenly.`);
+    if (recommendations.length === 0) recommendations.push("🎉 Your portfolio is well diversified!");
+    
+    document.getElementById("recommendationsList").innerHTML = recommendations.map(text => `<div class="recommendation-card"><div class="recommendation-text">${text}</div></div>`).join('');
+
+    // Fundamentals
+    const fundHtml = data.map(stock => {
+      const fd = fundamentalDB[stock.stock];
+      if (!fd) return '';
+      return `<div class="fund-card"><div class="fund-header"><span class="fund-stock">${stock.stock.split(':')[1]}</span><span class="fund-label">${stock.sector}</span></div>
+        <div class="fund-row"><span class="fund-label">ROE</span><span class="fund-value">${fd.roe}%</span></div>
+        <div class="fund-row"><span class="fund-label">ROCE</span><span class="fund-value">${fd.roce}%</span></div>
+        <div class="fund-row"><span class="fund-label">D/E</span><span class="fund-value">${fd.de}</span></div>
+        <div class="fund-row"><span class="fund-label">P/E</span><span class="fund-value">${fd.pe}</span></div>
+        <div class="fund-row"><span class="fund-label">P/B</span><span class="fund-value">${fd.pb}</span></div>
+        <div class="fund-row"><span class="fund-label">PEG</span><span class="fund-value">${fd.peg || "N/A"}</span></div></div>`;
+    }).filter(h => h).join('');
+    document.getElementById("fundamentalsGrid").innerHTML = fundHtml || '<div class="info">No fundamental data available</div>';
+    document.getElementById("fundCount").innerHTML = `${document.querySelectorAll('.fund-card').length} STOCKS`;
+
+    // Sector Diversification Table (with Health Status and Action)
+    updateSectorDiversification();
+    
+    // AI Decision Matrix
+    renderSummary();
+  }
+
+  function loadData(stocks) { portfolio = processData(stocks); updateAll(portfolio); document.getElementById("statusMsg").innerHTML = "✅ SYSTEM READY"; }
+
+  function parseExcel(buffer) {
+    const wb = XLSX.read(buffer, { type: 'array' });
+    const sheet = wb.Sheets[wb.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+    const stocks = [];
+    for (let i = 1; i < rows.length; i++) {
+      const r = rows[i];
+      if (!r || r.length < 5) continue;
+      const stock = String(r[0]).trim();
+      if (!stock) continue;
+      stocks.push({ stock, cmp: parseFloat(String(r[1]).replace(/,/g, '')) || 0, buyPrice: parseFloat(String(r[2]).replace(/,/g, '')) || 0, qty: parseFloat(r[3]) || 0, invested: parseFloat(String(r[4]).replace(/,/g, '')) || 0 });
+    }
+    return stocks;
+  }
+
+  function downloadTemplate() {
+    const ws = XLSX.utils.aoa_to_sheet([["STOCK","CMP","BUY PRICE","QTY","INVESTED"],["NSE:RELIANCE","2500","2400","10","24000"]]);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Portfolio_Template");
+    XLSX.writeFile(wb, "NEO_QUANT_Template.xlsx");
+    document.getElementById("statusMsg").innerHTML = "✅ TEMPLATE DOWNLOADED";
+    setTimeout(() => document.getElementById("statusMsg").innerHTML = "SYSTEM READY", 3000);
+  }
+
+  // Tab switching
+  document.querySelectorAll(".nav-item").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
+      const tabId = btn.dataset.tab + "Tab";
+      document.getElementById(tabId).classList.add("active");
+      if (btn.dataset.tab === "charts" && charts.top) { charts.top.update(); charts.pnl.update(); charts.bubble.update(); }
+      if (btn.dataset.tab === "summary") renderSummary();
+      if (btn.dataset.tab === "diversification") updateSectorDiversification();
+    });
+  });
+
+  let pendingFile = null;
+  document.getElementById("uploadBtn").addEventListener("click", () => document.getElementById("fileInput").click());
+  document.getElementById("fileInput").addEventListener("change", async (e) => { if(e.target.files[0]){ pendingFile = await e.target.files[0].arrayBuffer(); document.getElementById("statusMsg").innerHTML = "📎 FILE LOADED. CLICK APPLY."; } });
+  document.getElementById("applyBtn").addEventListener("click", () => { if(pendingFile){ try{ loadData(parseExcel(pendingFile)); pendingFile = null; document.getElementById("fileInput").value = ""; }catch(err){ alert("ERROR: " + err.message); } } else alert("UPLOAD FILE FIRST"); });
+  document.getElementById("resetBtn").addEventListener("click", () => { loadData(sampleStocks); currentSort = { column: null, direction: 'asc' }; currentFilterText = ""; document.getElementById("stockFilter").value = ""; });
+  document.getElementById("resetSortBtn").addEventListener("click", () => { currentSort = { column: null, direction: 'asc' }; renderHoldingsTable(portfolio); });
+  document.getElementById("downloadTemplateBtn").addEventListener("click", downloadTemplate);
+
+  // Summary filter event listeners
+  document.getElementById("summaryValuationFilter").addEventListener("change", function() { renderSummary(); });
+  document.getElementById("summaryQualityFilter").addEventListener("change", function() { renderSummary(); });
+  document.getElementById("summaryActionFilter").addEventListener("change", function() { renderSummary(); });
+  document.getElementById("summarySectorFilter").addEventListener("change", function() { renderSummary(); });
+  document.getElementById("summaryResetFilters").addEventListener("click", function() {
+    document.getElementById("summaryValuationFilter").value = "all";
+    document.getElementById("summaryQualityFilter").value = "all";
+    document.getElementById("summaryActionFilter").value = "all";
+    document.getElementById("summarySectorFilter").value = "all";
+    renderSummary();
+  });
+
+  // Theme Toggle
+  function initTheme() {
+    const body = document.body;
+    if (localStorage.getItem("theme") === "light") body.classList.add("light");
+    document.getElementById("themeToggle").addEventListener("click", () => {
+      body.classList.toggle("light");
+      localStorage.setItem("theme", body.classList.contains("light") ? "light" : "dark");
+      if (charts.top) charts.top.update();
+      if (charts.pnl) charts.pnl.update();
+      if (charts.bubble) charts.bubble.update();
+      if (stockChart) stockChart.update();
+      renderHoldingsTable(portfolio);
+      renderSummary();
+      updateSectorDiversification();
+    });
+  }
+
+  loadData(sampleStocks);
+  initTheme();
+</script>
+</body>
+</html>
