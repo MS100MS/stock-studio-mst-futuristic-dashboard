@@ -9,7 +9,7 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
-    /* DARK MODE - Default */
+    /* DARK MODE - Futuristic (UNCHANGED) */
     body {
       --bg: linear-gradient(135deg, #0a0a1a 0%, #0f0f2a 100%);
       --card: rgba(18, 18, 40, 0.85);
@@ -28,23 +28,23 @@
       --sidebar-bg: rgba(10, 10, 26, 0.95);
     }
     
-    /* LIGHT MODE - Pastel */
+    /* LIGHT MODE - Dark Olive Green & Ocean Blue */
     body.light {
-      --bg: linear-gradient(135deg, #f0ede8 0%, #e6e0d8 100%);
+      --bg: linear-gradient(135deg, #e8f0ec 0%, #d4e0d8 100%);
       --card: rgba(255, 255, 255, 0.95);
       --card-solid: #ffffff;
-      --text: #4a4a4a;
-      --text-light: #8a8a8a;
-      --border: #d4cfc8;
-      --primary: #7b9a6e;
-      --primary-glow: rgba(123, 154, 110, 0.2);
-      --primary-light: #e8ede4;
-      --positive: #5a8a6e;
-      --negative: #c97a6e;
-      --warning: #c9a06e;
-      --table-header: #e8e4dc;
-      --shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      --sidebar-bg: #f5f0ea;
+      --text: #1a3a2a;
+      --text-light: #2d5a3b;
+      --border: #b8d0c0;
+      --primary: #2a6b4a;
+      --primary-glow: rgba(42, 107, 74, 0.2);
+      --primary-light: #e0ece4;
+      --positive: #2a7a4a;
+      --negative: #cd5c42;
+      --warning: #d48a3a;
+      --table-header: #d4e4d8;
+      --shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+      --sidebar-bg: #e8f0e8;
     }
     
     body { background: var(--bg); color: var(--text); font-family: 'Inter', 'Segoe UI', sans-serif; min-height: 100vh; }
@@ -55,7 +55,7 @@
     /* Sidebar Navigation */
     .sidebar { width: 280px; background: var(--sidebar-bg); backdrop-filter: blur(10px); border-right: 1px solid var(--border); padding: 2rem 1rem; position: fixed; height: 100vh; overflow-y: auto; left: 0; top: 0; z-index: 100; }
     .sidebar-header { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
-    .sidebar-header h1 { font-size: 1.2rem; background: linear-gradient(135deg, var(--primary), #aa66ff); background-clip: text; -webkit-background-clip: text; color: transparent; letter-spacing: -0.5px; white-space: pre-line; }
+    .sidebar-header h1 { font-size: 1.2rem; background: linear-gradient(135deg, var(--primary), #1a5a8a); background-clip: text; -webkit-background-clip: text; color: transparent; letter-spacing: -0.5px; white-space: pre-line; }
     .sidebar-header p { font-size: 0.6rem; color: var(--text-light); margin-top: 0.3rem; letter-spacing: 1px; }
     
     .nav-menu { display: flex; flex-direction: column; gap: 0.5rem; }
@@ -85,9 +85,9 @@
     /* KPI Grid */
     .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
     .kpi-card { background: var(--card); backdrop-filter: blur(10px); border-radius: 20px; padding: 1rem; text-align: center; border: 1px solid var(--border); box-shadow: var(--shadow); position: relative; overflow: hidden; }
-    .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--primary), #aa66ff); }
+    .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--primary), #1a5a8a); }
     .kpi-label { font-size: 0.7rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; }
-    .kpi-value { font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), #aa66ff); background-clip: text; -webkit-background-clip: text; color: transparent; }
+    .kpi-value { font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), #1a5a8a); background-clip: text; -webkit-background-clip: text; color: transparent; }
     .positive { color: var(--positive); font-weight: bold; }
     .negative { color: var(--negative); font-weight: bold; }
     
@@ -107,38 +107,43 @@
     .filter-input, .filter-select { padding: 0.4rem 1rem; border-radius: 30px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-family: monospace; }
     .reset-sort { background: var(--primary-light); border: 1px solid var(--border); padding: 0.2rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.65rem; }
     
-    /* Quality & Valuation Badges */
+    /* Quality & Valuation Badges - Dark Mode */
     .quality-excellent { background: linear-gradient(135deg, #00ff8820, #00ccff20); color: #00ff88; padding: 0.2rem 0.6rem; border-radius: 20px; font-weight: bold; display: inline-block; }
     .quality-good { background: linear-gradient(135deg, #00ccff20, #aa44ff20); color: #00ccff; padding: 0.2rem 0.6rem; border-radius: 20px; font-weight: bold; display: inline-block; }
     .quality-average { background: rgba(255, 170, 68, 0.15); color: #ffaa44; padding: 0.2rem 0.6rem; border-radius: 20px; font-weight: bold; display: inline-block; }
     .quality-poor { background: rgba(255, 68, 102, 0.15); color: #ff6688; padding: 0.2rem 0.6rem; border-radius: 20px; font-weight: bold; display: inline-block; }
-    body.light .quality-excellent { background: #5a8a6e20; color: #5a8a6e; }
-    body.light .quality-good { background: #7b9a6e20; color: #7b9a6e; }
-    body.light .quality-average { background: #c9a06e20; color: #c9a06e; }
-    body.light .quality-poor { background: #c97a6e20; color: #c97a6e; }
+    
+    /* Quality & Valuation Badges - Light Mode (Olive Green) */
+    body.light .quality-excellent { background: #2a7a4a20; color: #2a7a4a; }
+    body.light .quality-good { background: #2a6b4a20; color: #2a6b4a; }
+    body.light .quality-average { background: #d48a3a20; color: #d48a3a; }
+    body.light .quality-poor { background: #cd5c4220; color: #cd5c42; }
     
     .valuation-undervalued { color: #00ff88; }
     .valuation-fair { color: #ffaa44; }
     .valuation-overvalued { color: #ff4466; }
-    body.light .valuation-undervalued { color: #5a8a6e; }
-    body.light .valuation-fair { color: #c9a06e; }
-    body.light .valuation-overvalued { color: #c97a6e; }
+    body.light .valuation-undervalued { color: #2a7a4a; }
+    body.light .valuation-fair { color: #d48a3a; }
+    body.light .valuation-overvalued { color: #cd5c42; }
     
     .action-strong_buy { background: linear-gradient(135deg, #00ff88, #00ccff); color: #0a0a1a; padding: 0.2rem 0.8rem; border-radius: 20px; font-weight: bold; display: inline-block; }
     .action-buy { background: rgba(0, 255, 136, 0.15); color: #00ff88; padding: 0.2rem 0.8rem; border-radius: 20px; display: inline-block; }
     .action-hold { background: rgba(255, 170, 68, 0.15); color: #ffaa44; padding: 0.2rem 0.8rem; border-radius: 20px; display: inline-block; }
     .action-reduce { background: rgba(255, 68, 102, 0.15); color: #ff6688; padding: 0.2rem 0.8rem; border-radius: 20px; display: inline-block; }
     .action-sell { background: #ff4466; color: #0a0a1a; padding: 0.2rem 0.8rem; border-radius: 20px; font-weight: bold; display: inline-block; }
-    body.light .action-buy { background: #5a8a6e20; color: #5a8a6e; }
-    body.light .action-hold { background: #c9a06e20; color: #c9a06e; }
-    body.light .action-reduce { background: #c97a6e20; color: #c97a6e; }
+    
+    body.light .action-buy { background: #2a7a4a20; color: #2a7a4a; }
+    body.light .action-hold { background: #d48a3a20; color: #d48a3a; }
+    body.light .action-reduce { background: #cd5c4220; color: #cd5c42; }
+    body.light .action-strong_buy { background: linear-gradient(135deg, #2a7a4a, #2a6b4a); color: white; }
+    body.light .action-sell { background: #cd5c42; color: white; }
     
     /* Sector Chart */
     .sector-bar-item { display: flex; align-items: center; gap: 10px; margin-bottom: 0.5rem; }
     .sector-name { width: 120px; font-size: 0.7rem; font-weight: 600; }
     .sector-bar-bg { flex: 1; height: 24px; background: var(--primary-light); border-radius: 12px; overflow: hidden; }
-    .sector-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #aa66ff); border-radius: 12px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; color: white; font-size: 0.65rem; font-weight: bold; }
-    body.light .sector-bar-fill { color: var(--text); }
+    .sector-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #1a5a8a); border-radius: 12px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; color: white; font-size: 0.65rem; font-weight: bold; }
+    body.light .sector-bar-fill { color: white; }
     
     /* Charts */
     .three-charts { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
@@ -149,7 +154,7 @@
     /* Stock Details */
     .detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.5rem; background: var(--primary-light); border-radius: 12px; padding: 0.8rem; margin-bottom: 1rem; }
     .detail-label { font-size: 0.6rem; color: var(--text-light); text-transform: uppercase; }
-    .detail-value { font-size: 0.9rem; font-weight: 700; background: linear-gradient(135deg, var(--primary), #aa66ff); background-clip: text; -webkit-background-clip: text; color: transparent; }
+    .detail-value { font-size: 0.9rem; font-weight: 700; background: linear-gradient(135deg, var(--primary), #1a5a8a); background-clip: text; -webkit-background-clip: text; color: transparent; }
     
     /* Score Card */
     .score-card { background: var(--card); border-radius: 20px; padding: 1.5rem; margin-bottom: 1rem; border: 1px solid var(--border); text-align: center; }
@@ -175,9 +180,9 @@
     .sector-status-overweight { color: #ff4466; font-weight: bold; }
     .sector-status-underweight { color: #00ff88; font-weight: bold; }
     .sector-status-balanced { color: #ffaa44; font-weight: bold; }
-    body.light .sector-status-overweight { color: #c97a6e; }
-    body.light .sector-status-underweight { color: #5a8a6e; }
-    body.light .sector-status-balanced { color: #c9a06e; }
+    body.light .sector-status-overweight { color: #cd5c42; }
+    body.light .sector-status-underweight { color: #2a7a4a; }
+    body.light .sector-status-balanced { color: #d48a3a; }
     
     @media (max-width: 768px) {
       .sidebar { width: 80px; padding: 1rem 0.5rem; }
@@ -379,7 +384,7 @@
 </div>
 
 <script>
-  // Fundamental Data
+  // Fundamental Data (same as before - kept intact)
   const fundamentalDB = {
     "NSE:TCS": { roe:49.1, roce:66.24, de:0.5, pe:17, pb:7.81, peg:2.22, pat:49454 },
     "NSE:RELIANCE": { roe:9.9, roce:11.29, de:0.41, pe:22.7, pb:2.03, peg:3.44, pat:95610 },
@@ -516,7 +521,7 @@
     
     document.getElementById("tableBody").innerHTML = filtered.map(s => {
       const portPct = (s.currentValue / totalValue) * 100;
-      return `<tr><td class="text-left" style="font-weight:600; color:var(--primary);">${s.stock}</td><td class="${s.cmp >= s.buyPrice ? 'positive' : 'negative'}">${formatCurrency(s.cmp)}</td><td>${formatCurrency(s.buyPrice)}</td><td>${s.qty}</td><td>${formatCurrency(s.invested)}</td><td class="${s.currentValue >= s.invested ? 'positive' : 'negative'}">${formatCurrency(s.currentValue)}</td><td class="${s.pnl >= 0 ? 'positive' : 'negative'}">${s.pnl >= 0 ? '+' : ''}${formatCurrency(Math.abs(s.pnl))}</td><td class="${s.pnlPct >= 0 ? 'positive' : 'negative'}">${s.pnlPct >= 0 ? '+' : ''}${s.pnlPct.toFixed(2)}%</td><td>${portPct.toFixed(2)}%</td></tr>`;
+      return `<tr><td class="text-left" style="font-weight:600; color:var(--primary);">${s.stock}</td><td class="${s.cmp >= s.buyPrice ? 'positive' : 'negative'}">${formatCurrency(s.cmp)}</td><td>${formatCurrency(s.buyPrice)}</td><td>${s.qty}</td><td>${formatCurrency(s.invested)}</td><td class="${s.currentValue >= s.invested ? 'positive' : 'negative'}">${formatCurrency(s.currentValue)}</td><td class="${s.pnl >= 0 ? 'positive' : 'negative'}">${s.pnl >= 0 ? '+' : ''}${formatCurrency(Math.abs(s.pnl))}</td><td class="${s.pnlPct >= 0 ? 'positive' : 'negative'}">${s.pnlPct >= 0 ? '+' : ''}${s.pnlPct.toFixed(2)}%</td><td>${portPct.toFixed(2)}%<tr>`;
     }).join('');
     
     document.getElementById("filterStats").innerHTML = `${filtered.length} OF ${data.length} STOCKS`;
@@ -565,7 +570,6 @@
     return { action: "hold", text: "🤚 HOLD" };
   }
 
-  // AI DECISION MATRIX
   function renderSummary() {
     if (!portfolio.length) {
       document.getElementById("summaryTableBody").innerHTML = '<tr><td colspan="5" style="text-align:center;">LOADING DATA...</td></tr>';
@@ -640,7 +644,6 @@
     }).join('');
   }
 
-  // Sector Diversification with Health Status and Action columns
   function updateSectorDiversification() {
     if (!portfolio.length) return;
     
@@ -716,7 +719,6 @@
     renderHoldingsTable(data);
     document.getElementById("stockFilter").oninput = (e) => { currentFilterText = e.target.value; renderHoldingsTable(portfolio); };
     
-    // Sector chart (bar chart)
     const sectorMap = new Map();
     data.forEach(s => sectorMap.set(s.sector, (sectorMap.get(s.sector) || 0) + s.currentValue));
     const sectorData = Array.from(sectorMap.entries()).map(([n,v]) => ({ name: n, value: v, pct: (v/totalValue)*100 })).sort((a,b) => b.value - a.value);
@@ -728,7 +730,6 @@
       </div>
     `).join('');
 
-    // Stock selector
     const select = document.getElementById("stockSelect");
     select.innerHTML = '<option value="">-- SELECT STOCK --</option>' + data.map(s => `<option value="${s.stock}">${s.stock}</option>`).join('');
     select.onchange = () => {
@@ -753,17 +754,14 @@
       } else { document.getElementById("stockChartContainer").style.display = 'none'; }
     };
 
-    // Top 10 chart
     const top10 = [...data].sort((a,b) => b.currentValue - a.currentValue).slice(0,10);
     if (charts.top) charts.top.destroy();
     charts.top = new Chart(document.getElementById("topChart"), { type: 'bar', data: { labels: top10.map(s => s.stock.split(':')[1]), datasets: [{ label: '₹ VALUE', data: top10.map(s => s.currentValue), backgroundColor: '#00ccff80' }] }, options: { responsive: true } });
 
-    // P&L chart
     const pnlData = [...data].sort((a,b) => Math.abs(b.pnl) - Math.abs(a.pnl)).slice(0,10);
     if (charts.pnl) charts.pnl.destroy();
     charts.pnl = new Chart(document.getElementById("pnlChart"), { type: 'bar', data: { labels: pnlData.map(s => s.stock.split(':')[1]), datasets: [{ label: '₹ P&L', data: pnlData.map(s => s.pnl), backgroundColor: pnlData.map(s => s.pnl >= 0 ? '#00ff88' : '#ff4466') }] }, options: { responsive: true } });
 
-    // Bubble chart
     const bubbleSectorMap = new Map();
     data.forEach(s => {
       if (!bubbleSectorMap.has(s.sector)) bubbleSectorMap.set(s.sector, { totalValue: 0, totalPnl: 0 });
@@ -786,7 +784,6 @@
     });
     document.getElementById("bubbleLegend").innerHTML = bubbleData.map((item, idx) => `<span style="display:inline-flex;align-items:center;margin:0 6px;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${colors[idx % colors.length]};margin-right:4px;"></span>${item.name}</span>`).join('');
 
-    // Diversification Score
     const topStockPct = Math.max(...data.map(s => (s.currentValue / totalValue) * 100));
     const maxSectorPct = Math.max(...sectorData.map(s => s.pct));
     const top5Pct = [...data].sort((a,b) => b.currentValue - a.currentValue).slice(0,5).reduce((s,i) => s + i.currentValue, 0) / totalValue * 100;
@@ -816,7 +813,6 @@
     
     document.getElementById("recommendationsList").innerHTML = recommendations.map(text => `<div class="recommendation-card"><div class="recommendation-text">${text}</div></div>`).join('');
 
-    // Fundamentals
     const fundHtml = data.map(stock => {
       const fd = fundamentalDB[stock.stock];
       if (!fd) return '';
@@ -831,10 +827,7 @@
     document.getElementById("fundamentalsGrid").innerHTML = fundHtml || '<div class="info">No fundamental data available</div>';
     document.getElementById("fundCount").innerHTML = `${document.querySelectorAll('.fund-card').length} STOCKS`;
 
-    // Sector Diversification Table (with Health Status and Action)
     updateSectorDiversification();
-    
-    // AI Decision Matrix
     renderSummary();
   }
 
@@ -864,7 +857,6 @@
     setTimeout(() => document.getElementById("statusMsg").innerHTML = "SYSTEM READY", 3000);
   }
 
-  // Tab switching
   document.querySelectorAll(".nav-item").forEach(btn => {
     btn.addEventListener("click", () => {
       document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("active"));
@@ -886,7 +878,6 @@
   document.getElementById("resetSortBtn").addEventListener("click", () => { currentSort = { column: null, direction: 'asc' }; renderHoldingsTable(portfolio); });
   document.getElementById("downloadTemplateBtn").addEventListener("click", downloadTemplate);
 
-  // Summary filter event listeners
   document.getElementById("summaryValuationFilter").addEventListener("change", function() { renderSummary(); });
   document.getElementById("summaryQualityFilter").addEventListener("change", function() { renderSummary(); });
   document.getElementById("summaryActionFilter").addEventListener("change", function() { renderSummary(); });
@@ -899,7 +890,6 @@
     renderSummary();
   });
 
-  // Theme Toggle
   function initTheme() {
     const body = document.body;
     if (localStorage.getItem("theme") === "light") body.classList.add("light");
